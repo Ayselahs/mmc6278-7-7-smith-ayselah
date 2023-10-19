@@ -92,9 +92,9 @@ router
 router.post('/user', async (req, res) => {
   const { username, password } = req.body
   try {
-    if (!(username || password)) {
+    if (!(username && password))
       return res.status(400).send('No username or password provided')
-    }
+
     const hash = await bcrypt.hash(password, 10)
     await db.query(
       `INSERT INTO users (username, password) VALUES (?, ?)`,
@@ -128,7 +128,7 @@ router.post('/login', async (req, res) => {
   // If the password matches, set req.session.loggedIn to true
   // set req.session.userId to the user's id
   // call req.session.save and in the callback redirect to /
-  if (!(username || password))
+  if (!(username && password))
     return res.status(400).send('No username or password provided')
 
   const [[user]] = await db.query(
